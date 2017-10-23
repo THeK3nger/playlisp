@@ -7,6 +7,8 @@ from configparser import ConfigParser
 import spotipy
 import spotipy.util as util
 
+from playlisp.data.playlist import SpotifyPlaylist
+
 
 class PlayLisp(object):
     """
@@ -40,15 +42,15 @@ class PlayLisp(object):
         self._spotify = spotipy.Spotify(auth=token)
 
     def search(self):
-        '''
+        """
         Test function for searching using the API
-        '''
+        """
         results = self._spotify.search(q='weezer', limit=20)
         print(results)
 
     def playlist(self, playlist_id):
         results = self._spotify.user_playlist_tracks(self._username, playlist_id)
-        return results["items"]
+        return SpotifyPlaylist.from_spotify_dto(results["items"])
 
     def save_on(self, id, new_playlist):
         tracks = [ x.id for x in new_playlist._tracks ]
