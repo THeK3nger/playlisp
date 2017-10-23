@@ -13,8 +13,8 @@ The main idea is to allow chain-combination of Spotify's playlist. For instance,
     pl = PlayLisp()
     playlist_id_1 = 'some_playlist_id' # You can get this from Spotify application!
     playlist_id_2 = 'some_other_playlist_id'
-    playlist_1 = SpotifyPlaylist.from_spotify_dto(pl.playlist(playlist_id_1))
-    playlist_2 = SpotifyPlaylist.from_spotify_dto(pl.playlist(playlist_id_2))
+    playlist_1 = pl.playlist(playlist_id_1)
+    playlist_2 = pl.playlist(playlist_id_2)
     output = playlist_1.interleave(playlist_2).take_first(20).shuffle().collect()
     print(str(output)) # Preview
     print("Save Playlist")
