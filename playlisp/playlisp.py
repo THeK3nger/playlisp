@@ -7,6 +7,7 @@ from configparser import ConfigParser
 import spotipy
 import spotipy.oauth2 as oauth2
 
+from data.playlist import SpotifyPlaylist
 
 class PlayLisp(object):
     '''
@@ -39,7 +40,16 @@ class PlayLisp(object):
         results = self._spotify.search(q='weezer', limit=20)
         print(results)
 
+    def playlist(self):
+        print("Calling Spotify API")
+        results = self._spotify.user_playlist_tracks('thek3nger', '6tGLwMspk15xqCHGvyH4nd')
+        print("Done")
+        return results["items"]
+
+
 
 if __name__ == '__main__':
     pl = PlayLisp()
-    pl.search()
+    playlist = SpotifyPlaylist.from_spotify_dto(pl.playlist())
+    print(str(playlist))
+
