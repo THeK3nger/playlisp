@@ -1,0 +1,12 @@
+# IDE and Editors Files
+.vscode
+
+# Local Configuration
+local.ini
+
+# Python Files
+*/__pycache__/*
+*.pyo
+*.pyc
+
+
