@@ -1,5 +1,6 @@
 # IDE and Editors Files
 .vscode
+.idea
 
 # Local Configuration
 local.ini

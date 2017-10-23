@@ -1,26 +1,25 @@
-'''
+"""
 PlayLisp main module.
-'''
+"""
 
 from configparser import ConfigParser
 
 import spotipy
 import spotipy.oauth2 as oauth2
 
-from data.playlist import SpotifyPlaylist
 
 class PlayLisp(object):
-    '''
+    """
     Main application class. It handles and, in the future, abstracts over all the
     PlayLisp functionalities
-    '''
+    """
 
     def __init__(self):
         self._parser = ConfigParser()
         self._parser.read(['./config/default.ini', './config/local.ini'])
 
         if "client_id" not in self._parser["Spotify"] or \
-            "client_secret" not in self._parser["Spotify"]:
+                        "client_secret" not in self._parser["Spotify"]:
             print("ERROR")
 
         self._client_id = self._parser["Spotify"]["client_id"]
@@ -45,11 +44,3 @@ class PlayLisp(object):
         results = self._spotify.user_playlist_tracks('thek3nger', '6tGLwMspk15xqCHGvyH4nd')
         print("Done")
         return results["items"]
-
-
-
-if __name__ == '__main__':
-    pl = PlayLisp()
-    playlist = SpotifyPlaylist.from_spotify_dto(pl.playlist())
-    print(str(playlist))
-
