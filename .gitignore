@@ -10,4 +10,5 @@ local.ini
 *.pyo
 *.pyc
 
-
+# Spotipy Cache
+.cache-*
