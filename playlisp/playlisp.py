@@ -57,5 +57,9 @@ class PlayLisp(object):
         self._spotify.user_playlist_replace_tracks(self._username, id, tracks)
 
     def _authorize(self):
-        return util.prompt_for_user_token(self._username,'playlist-modify-public',self._client_id,self._client_secret,'http://localhost/')
+        return util.prompt_for_user_token(self._username,
+                                          'playlist-modify-public',
+                                          self._client_id,
+                                          self._client_secret,
+                                          'http://localhost/')
 

@@ -50,9 +50,9 @@ class PlayList(object):
         shuffle(new_pl._tracks)
         return new_pl
 
-    def take_first(self, n):
+    def take(self, n):
         """
-        Create a new playlist with the first n element.
+        Create a new playlist with the first n elements.
         :param n:
         :type n: int
         :return:
@@ -60,6 +60,18 @@ class PlayList(object):
         """
         new_pl = PlayList()
         new_pl._tracks = itertools.islice(self._tracks, n)
+        return new_pl
+
+    def drop(self, n):
+        """
+        Create a new playlist with  the first n elements dropped.
+        :param n:
+        :type n: int
+        :return:
+        :rtype: PlayList
+        """
+        new_pl = PlayList()
+        new_pl._tracks = next(itertools.islice(self._tracks, n, n), None)
         return new_pl
 
     def interleave(self, other):
@@ -75,6 +87,23 @@ class PlayList(object):
             new_pl._tracks = _bicycle(self._tracks)
         else:
             new_pl._tracks = _roundrobin(self._tracks, other._tracks)
+        return new_pl
+
+    def subtract(self, other):
+        """
+        Create a new playlist with all the tracks in self without the tracks in other.
+        :param other: A different playlist.
+        :type other: PlayList
+        :return:
+        :rtype: PlayList
+        """
+        new_pl = PlayList()
+        new_pl._tracks = itertools.filterfalse(lambda x: x not in other._tracks, self._tracks)
+        return new_pl
+
+    def filter(self, pred):
+        new_pl = PlayList()
+        new_pl._tracks = itertools.filterfalse(pred, self._tracks)
         return new_pl
 
     def __str__(self):

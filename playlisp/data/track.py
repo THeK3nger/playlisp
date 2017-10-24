@@ -1,6 +1,6 @@
-'''
+"""
 Store information about playlist's tracks.
-'''
+"""
 
 import collections
 
