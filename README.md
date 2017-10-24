@@ -57,13 +57,29 @@ username: your username
 redirect_url: http://localhost/ # Keep this in this way
 ```
 
-### Running
+### Running a PlayLisp script
 
-You *should* now be able to run the application with
+You can run a PlayLisP as a library and scripting it in Python **or you can script a playlist in Lisp!!**
 
-    python run.py
+First, create a sample `test.plisp` script with the following content
+
+```lisp
+(define "main" (playlist "some playlist id"))
+
+(define "result" (shuffle (interleave main main)))
+
+(print result)
+
+(save result "some output playlist id")
+```
+
+**WARNING, output playlist will be overwritten!**
+
+Now, you can run playlist with
+
+    python run.py --file test.plist
     
-And follow the on screen instruction for authentication/
+Note that the first time you will need to follow the on-screen instructions for authentication.
 
 ## Really?
 
