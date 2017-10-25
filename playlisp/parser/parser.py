@@ -1,3 +1,7 @@
+"""
+A minimal Lisp Interpreter for PlayLisP scripts.
+"""
+
 import operator as op
 from playlisp.playlisp import PlayLisp
 
@@ -5,10 +9,15 @@ List = list
 Number = (int, float)
 Env = dict
 
+# TODO: This should not be gloabal.
 PL = PlayLisp()
 
 
 class TokenType(object):
+    """
+    Represent a wrapper around a PlayLisP script type.
+    """
+
     def __init__(self, value):
         self.value = value
 
@@ -25,10 +34,17 @@ class TokenType(object):
 
 
 class Symbol(TokenType):
+    """
+    Wrap a string as a "Symbol"
+    """
     pass
 
 
 class String(TokenType):
+    """
+    Wrap a string as a "String"
+    """
+
     def __init__(self, x):
         super(String, self).__init__(x[1:-1])
 
@@ -38,17 +54,23 @@ StringRegex = r'^\".*\"$'
 
 
 def parse(program):
-    """Read a Scheme expression from a string."""
+    """
+    Read an expression from a string.
+    """
     return read_from_tokens(tokenize(program))
 
 
 def run_script(program):
     """
-
-    :param program:
+    Run the script passed as argument.
+    :param program: The string containing the program.
     :type program: str
-    :return:
     """
+
+    # This is a really hacky function. Because eval can only execute
+    # complete Lisp expression, and the input program may contain
+    # expression indented in different ways, I need to recompose
+    # every expression in ONE LINE. Then I pass each line to eval.
 
     # TODO: Count only parenthesis not in strings...
     def count_open(line):
@@ -72,9 +94,11 @@ def run_script(program):
 
 
 def read_from_tokens(tokens):
-    """Read an expression from a sequence of tokens."""
+    """
+    Read an expression from a sequence of tokens.
+    """
     if len(tokens) == 0:
-        raise SyntaxError('unexpected EOF while reading')
+        raise SyntaxError('Unexpected EOF while reading')
     token = tokens.pop(0)
     if '(' == token:
         L = []
@@ -89,25 +113,33 @@ def read_from_tokens(tokens):
 
 
 def atom(token):
-    """Numbers become numbers; every other token is a symbol."""
+    """
+    Numbers become numbers; every other token is a symbol.
+    """
     try:
         return int(token)
     except ValueError:
         try:
             return float(token)
         except ValueError:
+            # Strings must be surrounded by quotes ".
+            # Another temporary very quick and  dirty approach.
             if len(token) >= 2 and token[0] == '"' and token[-1] == '"':
                 return String(token)
             return Symbol(token)
 
 
 def tokenize(chars):
-    """Convert a string of characters into a list of tokens."""
+    """
+    Convert a string of characters into a list of tokens.
+    """
     return chars.replace('(', ' ( ').replace(')', ' ) ').split()
 
 
 def repl(prompt='playlisp> '):
-    "A prompt-read-eval-print loop."
+    """
+    A test REPL loop.
+    """
     while True:
         val = eval(parse(input(prompt)))
         if val is not None:
@@ -115,7 +147,10 @@ def repl(prompt='playlisp> '):
 
 
 def schemestr(exp):
-    "Convert a Python object back into a Scheme-readable string."
+    """
+    Convert a Python object back into a lisp-readable string.
+    """
+    # TODO: Add missing case for String. Now they are printed without quotes.
     if isinstance(exp, List):
         return '(' + ' '.join(map(schemestr, exp)) + ')'
     else:
@@ -123,14 +158,26 @@ def schemestr(exp):
 
 
 def standard_env():
-    "An environment with some Scheme standard procedures."
+    """
+    An environment with some standard procedures.
+    """
     env = Env()
     env.update({
         'interleave': lambda x, y: x.interleave(y),
         'shuffle': lambda x: x.shuffle(),
         'save': lambda source, dest: PL.save_on(dest, source),
-        '+': op.add, '-': op.sub, '*': op.mul, '/': op.floordiv,
-        '>': op.gt, '<': op.lt, '>=': op.ge, '<=': op.le, '=': op.eq,
+        'take': lambda x, n: x.take(n),
+        'drop': lambda x, n: x.drop(n),
+        'subtract': lambda l1, l2: l1.subtract(l2),
+        '+': op.add,
+        '-': op.sub,
+        '*': op.mul,
+        '/': op.floordiv,
+        '>': op.gt,
+        '<': op.lt,
+        '>=': op.ge,
+        '<=': op.le,
+        '=': op.eq,
         'abs': abs,
         'append': op.add,
         'begin': lambda *x: x[-1],
@@ -160,7 +207,9 @@ global_env = standard_env()
 
 
 def eval(x, env=global_env):
-    "Evaluate an expression in an environment."
+    """
+    Evaluate an expression in an environment.
+    """
     if isinstance(x, Symbol):  # variable reference
         return env[str(x)]
     elif isinstance(x, String):  # constant literal
